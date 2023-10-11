@@ -57,7 +57,7 @@ fun MessageCard(message: MessageModel) {
 private fun BodyText(text: String) {
     Surface(
         modifier = Modifier
-            .border(1.dp, Color.LightGray, RoundedCornerShape(100.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(all = 4.dp)
     ) {
         Text(text = text)
