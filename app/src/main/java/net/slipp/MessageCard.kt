@@ -22,13 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.slipp.model.MessageModel
 import net.slipp.ui.theme.ComposeTutorialTheme
 
 @Composable
-fun MessageCard(
-    author: String,
-    body: String,
-) {
+fun MessageCard(message: MessageModel) {
     Row(
         modifier = Modifier
             .padding(all = 8.dp)
@@ -46,11 +44,11 @@ fun MessageCard(
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = author,
+                text = message.author,
                 color = Color.DarkGray,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            BodyText(text = body)
+            BodyText(text = message.body)
         }
     }
 }
@@ -69,10 +67,11 @@ private fun BodyText(text: String) {
 @Preview(showBackground = true)
 @Composable
 private fun MessageCardPreview() {
+    val message = MessageModel(
+        author = "Android",
+        body = "Jetpack Compose",
+    )
     ComposeTutorialTheme {
-        MessageCard(
-            author = "Android",
-            body = "Jetpack Compose",
-        )
+        MessageCard(message)
     }
 }
