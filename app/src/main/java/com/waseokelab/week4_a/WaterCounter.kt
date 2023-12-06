@@ -17,10 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -61,9 +63,18 @@ fun WaterCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WellnessScreen(modifier: Modifier = Modifier) {
-//    WaterCounter(modifier)
-    StatefulCounter(modifier = modifier)
+fun WellnessScreen(
+    modifier: Modifier = Modifier,
+    wellnessViewModel: WellnessViewModel = viewModel()
+) {
+    Column {
+        StatefulCounter(modifier = modifier)
+        WellnessTasksList(
+            list = wellnessViewModel.tasks,
+            onCloseTask = { task -> wellnessViewModel.remove(task) },
+            onCheckedTask = { task, checked -> wellnessViewModel.changeTaskChecked(task, checked)}
+        )
+    }
 }
 
 @Composable
@@ -98,6 +109,7 @@ fun StatefulCounter(
         },
         modifier = modifier
     )
+
 }
 
 @Preview(showBackground = true)
@@ -109,26 +121,28 @@ fun WaterCounterPreview() {
 @Composable
 fun WellnessTaskItem(
     taskName: String,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var checkedState by remember {
+    var checkedState by rememberSaveable {
         mutableStateOf(false)
     }
     WellnessTaskItem(
         taskName = taskName,
         checked = checkedState,
         onCheckedChange = { checkedState = !checkedState },
-        onClose = {},
-        modifier = modifier)
+        onClose = onClose,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun WellnessTaskItem(
-    modifier: Modifier = Modifier,
     taskName: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -140,7 +154,7 @@ fun WellnessTaskItem(
                 .padding(start = 16.dp),
             text = taskName
         )
-        Checkbox(checked = checked, onCheckedChange = onCheckedChange)
+        Checkbox(checked = checked, onCheckedChange = {onCheckedChange(checked)})
         IconButton(onClick = onClose) {
             Icon(Icons.Filled.Close, contentDescription = "Close")
         }
